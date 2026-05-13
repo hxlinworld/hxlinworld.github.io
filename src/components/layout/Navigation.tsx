@@ -44,16 +44,15 @@ export default function Navigation({
     top: number;
     height: number;
   } | null>(null);
+  const resolvedLocale = i18n.enabled ? locale : i18n.defaultLocale;
 
   const effectiveItems = useMemo(() => {
-    if (!i18n.enabled) return items;
-    return itemsByLocale?.[locale] || itemsByLocale?.[i18n.defaultLocale] || items;
-  }, [i18n.defaultLocale, i18n.enabled, items, itemsByLocale, locale]);
+    return itemsByLocale?.[resolvedLocale] || itemsByLocale?.[i18n.defaultLocale] || items;
+  }, [i18n.defaultLocale, items, itemsByLocale, resolvedLocale]);
 
   const effectiveSiteTitle = useMemo(() => {
-    if (!i18n.enabled) return siteTitle;
-    return siteTitleByLocale?.[locale] || siteTitleByLocale?.[i18n.defaultLocale] || siteTitle;
-  }, [i18n.defaultLocale, i18n.enabled, locale, siteTitle, siteTitleByLocale]);
+    return siteTitleByLocale?.[resolvedLocale] || siteTitleByLocale?.[i18n.defaultLocale] || siteTitle;
+  }, [i18n.defaultLocale, resolvedLocale, siteTitle, siteTitleByLocale]);
 
   useEffect(() => {
     const handleScroll = () => {

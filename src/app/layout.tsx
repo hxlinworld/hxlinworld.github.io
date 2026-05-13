@@ -55,7 +55,9 @@ function buildLocaleBootstrapScript(config: ReturnType<typeof getRuntimeI18nConf
 
       let resolved = null;
 
-      if (cfg.persist) {
+      if (!cfg.enabled) {
+        resolved = cfg.defaultLocale;
+      } else if (cfg.persist) {
         resolved = matchLocale(localStorage.getItem(storageKey));
       }
 

@@ -48,6 +48,10 @@ function clearPersistedLocale() {
 }
 
 function resolveInitialLocale(config: I18nRuntimeConfig): string {
+  if (!config.enabled) {
+    return config.defaultLocale;
+  }
+
   const bootLocale = matchLocale(document.documentElement.getAttribute('data-locale'), config.locales);
   if (bootLocale) {
     return bootLocale;

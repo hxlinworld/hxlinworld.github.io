@@ -1,6 +1,7 @@
 import { Publication, PublicationType, ResearchArea } from '@/types/publication';
 import { getConfig } from './config';
 import { getRuntimeI18nConfig } from './i18n/config';
+import { parseBibTeXInline } from './bibtexInline';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const bibtexParse = require('bibtex-parse-js');
@@ -61,11 +62,13 @@ export function parseBibTeX(bibtexContent: string, locale?: string): Publication
 
     // Parse preview field (remove braces if present)
     const preview = tags.preview?.replace(/[{}]/g, '');
+    const title = parseBibTeXInline(tags.title || 'Untitled');
 
     // Create publication object
     const publication: Publication = {
       id: entry.citationKey || tags.id || `pub-${Date.now()}-${index}`,
-      title: cleanBibTeXString(tags.title || 'Untitled'),
+      title: title.plainText || 'Untitled',
+      titleNodes: title.nodes,
       authors,
       year,
       month: monthMapping[tags.month?.toLowerCase()] ? String(month) : tags.month,
@@ -230,37 +233,7 @@ function parseAuthors(authorsStr: string, highlightNames: string[]): Array<{ nam
 function cleanBibTeXString(str?: string): string {
   if (!str) return '';
 
-  // Remove outer quotes if present
-  let cleaned = str.replace(/^["']|["']$/g, '');
-
-  // Handle nested braces more carefully
-  // First remove double braces {{content}} -> content
-  cleaned = cleaned.replace(/\{\{([^}]*)\}\}/g, '$1');
-
-  // Remove single braces {content} -> content, but be careful with nesting
-  while (cleaned.includes('{') && cleaned.includes('}')) {
-    const beforeLength = cleaned.length;
-    cleaned = cleaned.replace(/\{([^{}]*)\}/g, '$1');
-    // If no change was made, break to avoid infinite loop
-    if (cleaned.length === beforeLength) break;
-  }
-
-  // Remove any remaining single braces
-  cleaned = cleaned.replace(/[{}]/g, '');
-
-  // Handle LaTeX commands (basic)
-  cleaned = cleaned.replace(/\\textbf{([^}]*)}/g, '$1');
-  cleaned = cleaned.replace(/\\emph{([^}]*)}/g, '$1');
-  cleaned = cleaned.replace(/\\cite{[^}]*}/g, '');
-  cleaned = cleaned.replace(/~/g, ' ');
-
-  // Remove remaining backslashes
-  cleaned = cleaned.replace(/\\/g, '');
-
-  // Remove extra spaces and newlines
-  cleaned = cleaned.replace(/\s+/g, ' ').trim();
-
-  return cleaned;
+  return parseBibTeXInline(str).plainText;
 }
 
 function detectResearchArea(title: string, keywords: string[]): ResearchArea {

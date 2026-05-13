@@ -26,8 +26,25 @@ export function getRuntimeI18nConfig(i18n?: I18nConfig): I18nRuntimeConfig {
     labels[locale] = i18n?.labels?.[locale] || locale;
   }
 
+  const enabled = i18n?.enabled ?? false;
+
+  if (!enabled) {
+    return {
+      enabled: false,
+      locales: [defaultLocale],
+      defaultLocale,
+      mode: 'fixed',
+      fixedLocale: defaultLocale,
+      persist: false,
+      switcher: false,
+      labels: {
+        [defaultLocale]: labels[defaultLocale] || defaultLocale,
+      },
+    };
+  }
+
   return {
-    enabled: i18n?.enabled ?? false,
+    enabled: true,
     locales,
     defaultLocale,
     mode: i18n?.mode === 'fixed' ? 'fixed' : 'auto',

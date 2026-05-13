@@ -10,6 +10,8 @@
 
 PRISM stands for **P**ortfolio & **R**esearch **I**nterface **S**ite **M**aker. It is a modern, configurable, and high-performance personal website template built with Next.js, Tailwind CSS, and TypeScript. It is designed for researchers, developers, and academics to showcase their work, publications, and portfolio with ease.
 
+Feel free to customize your own version of PRISM with coding agents.
+
 ![PRISM Preview](screenshot.png)
 
 ## ✨ Features
@@ -80,6 +82,8 @@ Customize the "About" section, "News", and "Selected Publications" on the homepa
 
 ### 3. Publications (`content/publications.bib`)
 Export your publications from Google Scholar, Zotero, or Mendeley to `content/publications.bib`. PRISM automatically parses this file to generate your Publications page. Customize the display of publications by changing `selected`, `preview` and `description` keys in the bib file. 
+
+Publication titles support a subset of BibTeX inline formatting commands, including `\textit{}`, `\emph{}`, `\textbf{}`, `\textsc{}`, `\textsuperscript{}` and `\textsubscript{}`.
 
 ### 4. Adding New Pages
 To add a new page (e.g., "Projects"), create a TOML file in `content/` (e.g., `content/projects.toml`) and add it to the `navigation` list in `content/config.toml`.
