@@ -8,6 +8,19 @@ import { getConfig } from '@/lib/config';
 import { getRuntimeI18nConfig } from '@/lib/i18n/config';
 import type { SiteConfig } from '@/lib/config';
 
+function resolveDateLocale(locale?: string) {
+  if (!locale) return 'en-US';
+  return locale.startsWith('zh') ? 'zh-CN' : 'en-US';
+}
+
+function formatBuildDate(locale?: string) {
+  return new Intl.DateTimeFormat(resolveDateLocale(locale), {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(new Date());
+}
+
 export async function generateMetadata(): Promise<Metadata> {
   const config = getConfig();
   const runtimeI18n = getRuntimeI18nConfig(config.i18n);
@@ -103,7 +116,7 @@ function buildLocalizedConfigMaps(
     const localizedConfig = getConfig(locale);
     navigationByLocale[locale] = localizedConfig.navigation;
     siteTitleByLocale[locale] = localizedConfig.site.title;
-    lastUpdatedByLocale[locale] = localizedConfig.site.last_updated;
+    lastUpdatedByLocale[locale] = localizedConfig.site.last_updated || formatBuildDate(locale);
   }
 
   return {
@@ -127,6 +140,7 @@ export default function RootLayout({
     siteTitleByLocale,
     lastUpdatedByLocale,
   } = buildLocalizedConfigMaps(targetLocales);
+  const resolvedLastUpdated = config.site.last_updated || formatBuildDate(runtimeI18n.defaultLocale);
 
   return (
     <html lang={runtimeI18n.defaultLocale} className="scroll-smooth" suppressHydrationWarning>
@@ -182,7 +196,7 @@ export default function RootLayout({
               {children}
             </main>
             <Footer
-              lastUpdated={config.site.last_updated}
+              lastUpdated={resolvedLastUpdated}
               lastUpdatedByLocale={lastUpdatedByLocale}
               defaultLocale={runtimeI18n.defaultLocale}
             />

@@ -2,25 +2,33 @@
 
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Image from 'next/image';
 import {
     MagnifyingGlassIcon,
     FunnelIcon,
     CalendarIcon,
     BookOpenIcon,
-    ClipboardDocumentIcon,
-    DocumentTextIcon
+    LinkIcon,
+    DocumentTextIcon,
+    CodeBracketIcon,
+    VideoCameraIcon
 } from '@heroicons/react/24/outline';
 import { Publication } from '@/types/publication';
 import { PublicationPageConfig } from '@/types/page';
 import { cn } from '@/lib/utils';
 import { useMessages } from '@/lib/i18n/useMessages';
 import FormattedBibTeXText from './FormattedBibTeXText';
+import PublicationPreviewMedia from './PublicationPreviewMedia';
 
 interface PublicationsListProps {
     config: PublicationPageConfig;
     publications: Publication[];
     embedded?: boolean;
+}
+
+function getDisplayVenue(pub: Publication) {
+    const venue = pub.journal || pub.conference || '';
+    const acronymMatch = venue.match(/\(([^)]+)\)\s*$/);
+    return acronymMatch?.[1] || venue;
 }
 
 export default function PublicationsList({ config, publications, embedded = false }: PublicationsListProps) {
@@ -29,8 +37,6 @@ export default function PublicationsList({ config, publications, embedded = fals
     const [selectedYear, setSelectedYear] = useState<number | 'all'>('all');
     const [selectedType, setSelectedType] = useState<string | 'all'>('all');
     const [showFilters, setShowFilters] = useState(false);
-    const [expandedBibtexId, setExpandedBibtexId] = useState<string | null>(null);
-    const [expandedAbstractId, setExpandedAbstractId] = useState<string | null>(null);
 
     // Extract unique years and types for filters
     const years = useMemo(() => {
@@ -185,7 +191,7 @@ export default function PublicationsList({ config, publications, embedded = fals
             </div>
 
             {/* Publications Grid */}
-            <div className="space-y-6">
+            <div className="space-y-4">
                 {filteredPublications.length === 0 ? (
                     <div className="text-center py-12 text-neutral-500">
                         {messages.publications.noResults}
@@ -197,58 +203,64 @@ export default function PublicationsList({ config, publications, embedded = fals
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.4, delay: 0.1 * index }}
-                            className="bg-white dark:bg-neutral-900 p-6 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 hover:shadow-md transition-all duration-200"
+                            className="publication-card-font bg-white dark:bg-neutral-900 p-4 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 hover:shadow-md transition-all duration-200"
                         >
-                            <div className="flex flex-col md:flex-row gap-6">
+                            <div className="flex flex-col md:flex-row gap-4">
                                 {pub.preview && (
-                                    <div className="w-full md:w-48 flex-shrink-0">
-                                        <div className="aspect-video md:aspect-[4/3] relative rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-800">
-                                            <Image
-                                                src={`/papers/${pub.preview}`}
-                                                alt={pub.title}
-                                                fill
-                                                className="object-cover"
-                                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                            />
+                                    <div className={`${embedded ? 'w-full md:w-52' : 'w-full md:w-64 lg:w-72'} flex-shrink-0 md:self-center`}>
+                                        <div className="aspect-video relative rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-800">
+                                            <PublicationPreviewMedia preview={pub.preview} title={pub.title} />
                                         </div>
                                     </div>
                                 )}
-                                <div className="flex-grow">
-                                    <h3 className={`${embedded ? "text-lg" : "text-xl"} font-semibold text-primary mb-2 leading-tight`}>
+                                <div className="flex-grow min-w-0">
+                                    <h3 className={`${embedded ? "text-[17px]" : "text-[18px]"} font-bold text-neutral-950 dark:text-neutral-100 mb-1 leading-[1.3]`}>
                                         <FormattedBibTeXText nodes={pub.titleNodes} fallback={pub.title} />
                                     </h3>
-                                    <p className={`${embedded ? "text-sm" : "text-base"} text-neutral-600 dark:text-neutral-400 mb-2`}>
+                                    <p className={`${embedded ? "text-base" : "text-[16px]"} text-neutral-950 dark:text-neutral-200 mb-1 leading-[1.3]`}>
                                         {pub.authors.map((author, idx) => (
                                             <span key={idx}>
-                                                <span className={`${author.isHighlighted ? 'font-semibold text-accent' : ''} ${author.isCoAuthor ? `underline underline-offset-4 ${author.isHighlighted ? 'decoration-accent' : 'decoration-neutral-400'}` : ''}`}>
+                                                <span className={`${author.isHighlighted ? 'font-semibold text-neutral-950 dark:text-neutral-100' : ''} ${author.isCoAuthor ? `underline underline-offset-4 decoration-neutral-500` : ''}`}>
                                                     {author.name}
                                                 </span>
                                                 {author.isCorresponding && (
-                                                    <sup className={`ml-0 ${author.isHighlighted ? 'text-accent' : 'text-neutral-600 dark:text-neutral-400'}`}>†</sup>
+                                                    <sup className="ml-0 text-neutral-950 dark:text-neutral-200">*</sup>
                                                 )}
                                                 {idx < pub.authors.length - 1 && ', '}
                                             </span>
                                         ))}
                                     </p>
-                                    <p className="text-sm font-medium text-neutral-800 dark:text-neutral-600 mb-3">
-                                        {pub.journal || pub.conference} {pub.year}
+                                    <p className={`${embedded ? "text-base" : "text-[16px]"} font-normal text-neutral-950 dark:text-neutral-200 mb-2 leading-[1.3]`}>
+                                        <em>{getDisplayVenue(pub)}</em> {pub.year}
                                     </p>
 
                                     {pub.description && (
-                                        <p className="text-sm text-neutral-600 dark:text-neutral-500 mb-4 line-clamp-3">
+                                        <p className={`${embedded ? "text-base" : "text-[16px]"} text-neutral-950 dark:text-neutral-200 mb-2.5 line-clamp-2 leading-[1.3]`}>
                                             {pub.description}
                                         </p>
                                     )}
 
-                                    <div className="flex flex-wrap gap-2 mt-auto">
-                                        {pub.doi && (
+                                    <div className="flex flex-wrap gap-2 mt-2">
+                                        {pub.url && (
                                             <a
-                                                href={`https://doi.org/${pub.doi}`}
+                                                href={pub.url}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-accent hover:text-white transition-colors"
+                                                className="inline-flex h-6 items-center px-2.5 rounded-md text-[13px] leading-none font-normal bg-neutral-100 dark:bg-neutral-800 text-neutral-950 dark:text-neutral-200 hover:bg-accent hover:text-white transition-colors"
                                             >
-                                                DOI
+                                                <LinkIcon className="h-3 w-3 mr-1" />
+                                                Project Page
+                                            </a>
+                                        )}
+                                        {pub.arxivId && (
+                                            <a
+                                                href={`https://arxiv.org/abs/${pub.arxivId}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex h-6 items-center px-2.5 rounded-md text-[13px] leading-none font-normal bg-neutral-100 dark:bg-neutral-800 text-neutral-950 dark:text-neutral-200 hover:bg-accent hover:text-white transition-colors"
+                                            >
+                                                <DocumentTextIcon className="h-3 w-3 mr-1" />
+                                                arXiv
                                             </a>
                                         )}
                                         {pub.code && (
@@ -256,83 +268,24 @@ export default function PublicationsList({ config, publications, embedded = fals
                                                 href={pub.code}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-accent hover:text-white transition-colors"
+                                                className="inline-flex h-6 items-center px-2.5 rounded-md text-[13px] leading-none font-normal bg-neutral-100 dark:bg-neutral-800 text-neutral-950 dark:text-neutral-200 hover:bg-accent hover:text-white transition-colors"
                                             >
+                                                <CodeBracketIcon className="h-3 w-3 mr-1" />
                                                 {messages.publications.code}
                                             </a>
                                         )}
-                                        {pub.abstract && (
-                                            <button
-                                                onClick={() => setExpandedAbstractId(expandedAbstractId === pub.id ? null : pub.id)}
-                                                className={cn(
-                                                    "inline-flex items-center px-3 py-1 rounded-md text-xs font-medium transition-colors",
-                                                    expandedAbstractId === pub.id
-                                                        ? "bg-accent text-white"
-                                                        : "bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-accent hover:text-white"
-                                                )}
+                                        {pub.video && (
+                                            <a
+                                                href={pub.video}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex h-6 items-center px-2.5 rounded-md text-[13px] leading-none font-normal bg-neutral-100 dark:bg-neutral-800 text-neutral-950 dark:text-neutral-200 hover:bg-accent hover:text-white transition-colors"
                                             >
-                                                <DocumentTextIcon className="h-3 w-3 mr-1.5" />
-                                                {messages.publications.abstract}
-                                            </button>
-                                        )}
-                                        {pub.bibtex && (
-                                            <button
-                                                onClick={() => setExpandedBibtexId(expandedBibtexId === pub.id ? null : pub.id)}
-                                                className={cn(
-                                                    "inline-flex items-center px-3 py-1 rounded-md text-xs font-medium transition-colors",
-                                                    expandedBibtexId === pub.id
-                                                        ? "bg-accent text-white"
-                                                        : "bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-accent hover:text-white"
-                                                )}
-                                            >
-                                                <BookOpenIcon className="h-3 w-3 mr-1.5" />
-                                                {messages.publications.bibtex}
-                                            </button>
+                                                <VideoCameraIcon className="h-3 w-3 mr-1" />
+                                                Video
+                                            </a>
                                         )}
                                     </div>
-
-                                    <AnimatePresence>
-                                        {expandedAbstractId === pub.id && pub.abstract ? (
-                                            <motion.div
-                                                key="abstract"
-                                                initial={{ opacity: 0, height: 0 }}
-                                                animate={{ opacity: 1, height: 'auto' }}
-                                                exit={{ opacity: 0, height: 0 }}
-                                                className="overflow-hidden mt-4"
-                                            >
-                                                <div className="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-4 border border-neutral-200 dark:border-neutral-700">
-                                                    <p className="text-sm text-neutral-600 dark:text-neutral-500 leading-relaxed">
-                                                        {pub.abstract}
-                                                    </p>
-                                                </div>
-                                            </motion.div>
-                                        ) : null}
-                                        {expandedBibtexId === pub.id && pub.bibtex ? (
-                                            <motion.div
-                                                key="bibtex"
-                                                initial={{ opacity: 0, height: 0 }}
-                                                animate={{ opacity: 1, height: 'auto' }}
-                                                exit={{ opacity: 0, height: 0 }}
-                                                className="overflow-hidden mt-4"
-                                            >
-                                                <div className="relative bg-neutral-50 dark:bg-neutral-800 rounded-lg p-4 border border-neutral-200 dark:border-neutral-700">
-                                                    <pre className="text-xs text-neutral-600 dark:text-neutral-500 overflow-x-auto whitespace-pre-wrap font-mono">
-                                                        {pub.bibtex}
-                                                    </pre>
-                                                    <button
-                                                        onClick={() => {
-                                                            navigator.clipboard.writeText(pub.bibtex || '');
-                                                            // Optional: Show copied feedback
-                                                        }}
-                                                        className="absolute top-2 right-2 p-1.5 rounded-md bg-white dark:bg-neutral-700 text-neutral-500 hover:text-accent shadow-sm border border-neutral-200 dark:border-neutral-600 transition-colors"
-                                                        title={messages.common.copyToClipboard}
-                                                    >
-                                                        <ClipboardDocumentIcon className="h-4 w-4" />
-                                                    </button>
-                                                </div>
-                                            </motion.div>
-                                        ) : null}
-                                    </AnimatePresence>
                                 </div>
                             </div>
                         </motion.div>
