@@ -1,39 +1,40 @@
 [site]
-title = "Jiale Liu"
-description = "PhD student at the University of Example."
-favicon = "/favicon.svg"
-last_updated = "November 18, 2025"
+title = "Kiwi Xiaolin Huang"
+description = "Research Intern at the ShangHaiTech."
+favicon = "/橘猫.svg"
 
 [author]
-name = "Jiale Liu"
-title = "PhD Student"
-institution = "University of Example"
-avatar = "/bio.jpg"
+name = "Xiaolin Huang"
+title = "Research Intern"
+institution = "ShanghaiTech University"
+avatar = "/mybio.png"
 
 [social]
 # Contact information (leave blank or delete to hide)
-
-email = "john.doe@example.com"
-location = "City, Country"
-location_url = "https://maps.google.com"
+location = "ShanghaiTech University, Shanghai, China"
+# location_url = "https://www.google.com/maps/place/Shanghai,+China"
 location_details = [
-  "Room 123, Science Building,",
-  "University Avenue, City, Country"
+  "Visual & Data Intelligence (VDI) Center,",
+  "ShanghaiTech University, Shanghai, China"
 ]
-google_scholar = "https://scholar.google.com"
-orcid = "https://orcid.org"
-github = "https://github.com"
-linkedin = "https://linkedin.com"
+
+email = "hxlin668@outlook.com"
+
+google_scholar = "https://scholar.google.com/citations?user=hBqczUEAAAAJ"
+# orcid = "https://orcid.org"
+github = "https://github.com/hxlinworld"
+twitter = "https://x.com/lUufXSE5dHVH3r4"
+# linkedin = "https://linkedin.com"
 
 [features]
 # Show a like button on the about page
-enable_likes = true
+enable_likes = false
 
 # Display all subpages on a single page
 enable_one_page_mode = false
 
 [i18n]
-enabled = true
+enabled = false
 locales = ["zh", "en"]
 default_locale = "en"
 # "auto" means the locale will be determined by the browser's language setting, "fixed" means the locale will be fixed to the default locale (but can be switched still, if you want to disable, set "enable=false")
@@ -61,22 +62,24 @@ target = "publications"
 href = "/publications"
 
 [[navigation]]
-title = "Teaching"
-type = "page"
-target = "teaching"
-href = "/teaching"
-
-[[navigation]]
-title = "Awards"
-type = "page"
-target = "awards"
-href = "/awards"
-
-[[navigation]]
 title = "Services"
 type = "page"
 target = "services"
 href = "/services"
+
+
+# [[navigation]]
+# title = "Teaching"
+# type = "page"
+# target = "teaching"
+# href = "/teaching"
+
+# [[navigation]]
+# title = "Awards"
+# type = "page"
+# target = "awards"
+# href = "/awards"
+
 
 [[navigation]]
 title = "CV"

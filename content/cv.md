@@ -15,11 +15,6 @@ Company/Institution
 - Description of key responsibilities and achievements.
 - Utilized skills to solve problems.
 
-## Skills
-
-- **Programming:** Python, C++, MATLAB, LaTeX
-- **Data Analysis:** Pandas, NumPy, SciPy
-- **Languages:** English (Native), French (Fluent)
 
 ## Awards & Honors
 

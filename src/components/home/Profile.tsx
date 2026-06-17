@@ -11,7 +11,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { MapPinIcon as MapPinSolidIcon, EnvelopeIcon as EnvelopeSolidIcon } from '@heroicons/react/24/solid';
 import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
-import { Github, Linkedin, Pin } from 'lucide-react';
+import { Github, Linkedin, Pin, Twitter } from 'lucide-react';
 import type { SiteConfig } from '@/lib/config';
 import { useMessages } from '@/lib/i18n/useMessages';
 
@@ -34,8 +34,16 @@ interface ProfileProps {
     researchInterests?: string[];
 }
 
+function getLocationUrl(location?: string, locationUrl?: string) {
+    if (locationUrl) return locationUrl;
+    if (!location) return undefined;
+
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`;
+}
+
 export default function Profile({ author, social, features, researchInterests }: ProfileProps) {
     const messages = useMessages();
+    const locationUrl = getLocationUrl(social.location, social.location_url);
 
     const [hasLiked, setHasLiked] = useState(false);
     const [showThanks, setShowThanks] = useState(false);
@@ -70,17 +78,17 @@ export default function Profile({ author, social, features, researchInterests }:
     };
 
     const socialLinks = [
+        ...(social.location || social.location_details ? [{
+            name: messages.profile.location,
+            href: locationUrl || '#',
+            icon: MapPinIcon,
+            isLocation: true,
+        }] : []),
         ...(social.email ? [{
             name: messages.profile.email,
             href: `mailto:${social.email}`,
             icon: EnvelopeIcon,
             isEmail: true,
-        }] : []),
-        ...(social.location || social.location_details ? [{
-            name: messages.profile.location,
-            href: social.location_url || '#',
-            icon: MapPinIcon,
-            isLocation: true,
         }] : []),
         ...(social.google_scholar ? [{
             name: 'Google Scholar',
@@ -101,6 +109,11 @@ export default function Profile({ author, social, features, researchInterests }:
             name: 'LinkedIn',
             href: social.linkedin,
             icon: Linkedin,
+        }] : []),
+        ...(social.twitter ? [{
+            name: 'X',
+            href: social.twitter,
+            icon: Twitter,
         }] : []),
     ];
 
@@ -196,9 +209,9 @@ export default function Profile({ author, social, features, researchInterests }:
                                                     <p key={i} className="break-words">{line}</p>
                                                 ))}
                                                 <div className="mt-2 flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2 justify-center">
-                                                    {social.location_url && (
+                                                    {locationUrl && (
                                                         <a
-                                                            href={social.location_url}
+                                                            href={locationUrl}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
                                                             className="inline-flex items-center justify-center space-x-2 bg-accent hover:bg-accent-dark text-white px-3 py-1 rounded-md text-xs font-medium transition-colors duration-200 w-full sm:w-auto"
