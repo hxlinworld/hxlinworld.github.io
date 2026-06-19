@@ -3,15 +3,16 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import {
+    CodeBracketIcon,
     DocumentTextIcon,
     LinkIcon,
     VideoCameraIcon,
 } from '@heroicons/react/24/outline';
-import { Github } from 'lucide-react';
 import { Publication } from '@/types/publication';
 import { useMessages } from '@/lib/i18n/useMessages';
 import FormattedBibTeXText from '@/components/publications/FormattedBibTeXText';
 import PublicationPreviewMedia from '@/components/publications/PublicationPreviewMedia';
+import GitHubStarsBadge from '@/components/publications/GitHubStarsBadge';
 
 interface SelectedPublicationsProps {
     publications: Publication[];
@@ -52,50 +53,50 @@ export default function SelectedPublications({ publications, title, enableOnePag
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.4, delay: 0.1 * index }}
-                        className="publication-card-font bg-neutral-50 dark:bg-neutral-800 p-4 rounded-lg shadow-sm border border-neutral-200 dark:border-[rgba(148,163,184,0.24)] hover:shadow-lg transition-all duration-200 hover:scale-[1.02]"
+                        className="publication-card-font bg-neutral-50 dark:bg-neutral-800 px-4 pt-4 pb-3 rounded-lg shadow-sm border border-neutral-200 dark:border-[rgba(148,163,184,0.24)] hover:shadow-lg transition-all duration-200 hover:scale-[1.02]"
                     >
-                        <div className="flex flex-col md:flex-row gap-4">
+                        <div className="flex flex-col md:flex-row gap-5">
                             {pub.preview && (
-                                <div className="w-full md:w-52 flex-shrink-0 md:self-center">
+                                <div className="w-full md:w-56 flex-shrink-0 md:self-start md:mt-2">
                                     <div className="aspect-video relative rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-800">
                                         <PublicationPreviewMedia preview={pub.preview} title={pub.title} />
                                     </div>
                                 </div>
                             )}
-                            <div className="flex-grow">
-                                <h3 className="text-[18px] font-bold text-neutral-950 dark:text-neutral-100 mb-1 leading-[1.3]">
+                            <div className="flex-grow pt-0.5">
+                                <h3 className="text-[18px] font-bold text-neutral-950 dark:text-[#9fb7df] mb-1 leading-[1.3]">
                                     <FormattedBibTeXText nodes={pub.titleNodes} fallback={pub.title} />
                                 </h3>
-                                <p className="text-[16px] text-neutral-950 dark:text-neutral-200 mb-1 leading-[1.3]">
+                                <p className="text-[16px] text-neutral-950 dark:text-neutral-500 mb-1 leading-[1.3]">
                                     {pub.authors.map((author, idx) => (
                                         <span key={idx}>
-                                            <span className={`${author.isHighlighted ? 'font-semibold text-neutral-950 dark:text-neutral-100' : ''} ${author.isCoAuthor ? `underline underline-offset-4 decoration-neutral-500` : ''}`}>
+                                            <span className={`${author.isHighlighted ? 'font-semibold text-neutral-950 dark:text-accent' : ''} ${author.isCoAuthor ? `underline underline-offset-4 ${author.isHighlighted ? 'dark:decoration-accent' : 'decoration-neutral-500'}` : ''}`}>
                                                 {author.name}
                                             </span>
                                             {author.isCorresponding && (
-                                                <sup className="ml-0 text-neutral-950 dark:text-neutral-200">*</sup>
+                                                <sup className={`ml-0 ${author.isHighlighted ? 'text-neutral-950 dark:text-accent' : 'text-neutral-950 dark:text-neutral-500'}`}>*</sup>
                                             )}
                                             {idx < pub.authors.length - 1 && ', '}
                                         </span>
                                     ))}
                                 </p>
-                                <p className="text-[16px] font-normal text-neutral-950 dark:text-neutral-200 mb-2 leading-[1.3]">
+                                <p className="text-[16px] font-normal text-neutral-950 dark:text-neutral-500 mb-2 leading-[1.3]">
                                     <em>{getDisplayVenue(pub)}</em> {pub.year}
                                 </p>
                                 {pub.description && (
-                                    <p className="text-[16px] text-neutral-950 dark:text-neutral-200 mb-2.5 line-clamp-2 leading-[1.3]">
+                                    <p className="text-[16px] text-neutral-950 dark:text-neutral-500 mb-2.5 line-clamp-2 leading-[1.3]">
                                         {pub.description}
                                     </p>
                                 )}
-                                <div className="flex flex-wrap gap-1.5">
+                                <div className="flex flex-wrap gap-3 mt-0.5">
                                     {pub.url && (
                                         <a
                                             href={pub.url}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="inline-flex h-5 items-center px-2 rounded-md text-[12px] leading-none font-normal bg-neutral-100 dark:bg-neutral-800 text-neutral-950 dark:text-neutral-200 hover:bg-accent hover:text-white transition-colors"
+                                            className="inline-flex h-8 items-center px-3.5 rounded-md text-[14px] leading-none font-normal bg-neutral-100 dark:bg-neutral-800 text-neutral-950 dark:text-neutral-500 hover:bg-accent hover:text-white transition-colors"
                                         >
-                                            <LinkIcon className="h-3 w-3 mr-1" />
+                                            <LinkIcon className="h-4 w-4 mr-1.5" />
                                             Project Page
                                         </a>
                                     )}
@@ -104,21 +105,10 @@ export default function SelectedPublications({ publications, title, enableOnePag
                                             href={`https://arxiv.org/abs/${pub.arxivId}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="inline-flex h-5 items-center px-2 rounded-md text-[12px] leading-none font-normal bg-neutral-100 dark:bg-neutral-800 text-neutral-950 dark:text-neutral-200 hover:bg-accent hover:text-white transition-colors"
+                                            className="inline-flex h-8 items-center px-3.5 rounded-md text-[14px] leading-none font-normal bg-neutral-100 dark:bg-neutral-800 text-neutral-950 dark:text-neutral-500 hover:bg-accent hover:text-white transition-colors"
                                         >
-                                            <DocumentTextIcon className="h-3 w-3 mr-1" />
+                                            <DocumentTextIcon className="h-4 w-4 mr-1.5" />
                                             arXiv
-                                        </a>
-                                    )}
-                                    {pub.code && (
-                                        <a
-                                            href={pub.code}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="inline-flex h-5 items-center px-2 rounded-md text-[12px] leading-none font-normal bg-neutral-100 dark:bg-neutral-800 text-neutral-950 dark:text-neutral-200 hover:bg-accent hover:text-white transition-colors"
-                                        >
-                                            <Github className="h-3 w-3 mr-1" />
-                                            {messages.publications.code}
                                         </a>
                                     )}
                                     {pub.video && (
@@ -126,11 +116,25 @@ export default function SelectedPublications({ publications, title, enableOnePag
                                             href={pub.video}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="inline-flex h-5 items-center px-2 rounded-md text-[12px] leading-none font-normal bg-neutral-100 dark:bg-neutral-800 text-neutral-950 dark:text-neutral-200 hover:bg-accent hover:text-white transition-colors"
+                                            className="inline-flex h-8 items-center px-3.5 rounded-md text-[14px] leading-none font-normal bg-neutral-100 dark:bg-neutral-800 text-neutral-950 dark:text-neutral-500 hover:bg-accent hover:text-white transition-colors"
                                         >
-                                            <VideoCameraIcon className="h-3 w-3 mr-1" />
+                                            <VideoCameraIcon className="h-4 w-4 mr-1.5" />
                                             Video
                                         </a>
+                                    )}
+                                    {pub.code && (
+                                        <div className="inline-flex items-center gap-1.5">
+                                            <a
+                                                href={pub.code}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="group inline-flex h-8 items-center px-3.5 rounded-md text-[14px] leading-none font-normal bg-neutral-100 dark:bg-neutral-800 text-neutral-950 dark:text-neutral-500 hover:bg-accent hover:text-white transition-colors"
+                                            >
+                                                <CodeBracketIcon className="h-4 w-4 mr-1.5 text-neutral-950 dark:text-neutral-300 group-hover:text-white transition-colors" />
+                                                {messages.publications.code}
+                                            </a>
+                                            <GitHubStarsBadge codeUrl={pub.code} />
+                                        </div>
                                     )}
                                 </div>
                             </div>

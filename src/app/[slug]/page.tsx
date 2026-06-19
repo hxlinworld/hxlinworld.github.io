@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { getPageConfig, getMarkdownContent, getBibtexContent } from '@/lib/content';
 import { getConfig } from '@/lib/config';
 import { parseBibTeX } from '@/lib/bibtexParser';
+import { enrichPublicationsWithGitHubStars } from '@/lib/githubStars';
 import DynamicPageClient, { type DynamicPageLocaleData } from '@/components/pages/DynamicPageClient';
 import {
   BasePageConfig,
@@ -13,7 +14,7 @@ import {
 import { Metadata } from 'next';
 import { getRuntimeI18nConfig } from '@/lib/i18n/config';
 
-function loadDynamicPageData(slug: string, locale?: string): DynamicPageLocaleData | null {
+async function loadDynamicPageData(slug: string, locale?: string): Promise<DynamicPageLocaleData | null> {
   const pageConfig = getPageConfig(slug, locale) as BasePageConfig | null;
 
   if (!pageConfig) {
@@ -26,7 +27,7 @@ function loadDynamicPageData(slug: string, locale?: string): DynamicPageLocaleDa
     return {
       type: 'publication',
       config: pubConfig,
-      publications: parseBibTeX(bibtex, locale),
+      publications: await enrichPublicationsWithGitHubStars(parseBibTeX(bibtex, locale)),
     };
   }
 
@@ -83,13 +84,13 @@ export default async function DynamicPage({ params }: { params: Promise<{ slug: 
   const dataByLocale: Record<string, DynamicPageLocaleData> = {};
 
   for (const locale of targetLocales) {
-    const localizedData = loadDynamicPageData(slug, locale);
+    const localizedData = await loadDynamicPageData(slug, locale);
     if (localizedData) {
       dataByLocale[locale] = localizedData;
     }
   }
 
-  const defaultData = loadDynamicPageData(slug);
+  const defaultData = await loadDynamicPageData(slug);
   if (defaultData) {
     dataByLocale[runtimeI18n.defaultLocale] = dataByLocale[runtimeI18n.defaultLocale] || defaultData;
   }
