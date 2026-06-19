@@ -11,9 +11,10 @@ import {
 } from '@heroicons/react/24/outline';
 import { MapPinIcon as MapPinSolidIcon, EnvelopeIcon as EnvelopeSolidIcon } from '@heroicons/react/24/solid';
 import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
-import { Github, Linkedin, Pin, Twitter } from 'lucide-react';
+import { Linkedin, Pin } from 'lucide-react';
 import type { SiteConfig } from '@/lib/config';
 import { useMessages } from '@/lib/i18n/useMessages';
+import GitHubMarkIcon from '@/components/ui/GitHubMarkIcon';
 
 // Custom ORCID icon component
 const OrcidIcon = ({ className }: { className?: string }) => (
@@ -24,6 +25,18 @@ const OrcidIcon = ({ className }: { className?: string }) => (
         xmlns="http://www.w3.org/2000/svg"
     >
         <path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zM7.369 4.378c.525 0 .947.431.947.947s-.422.947-.947.947a.95.95 0 0 1-.947-.947c0-.525.422-.947.947-.947zm-.722 3.038h1.444v10.041H6.647V7.416zm3.562 0h3.9c3.712 0 5.344 2.653 5.344 5.025 0 2.578-2.016 5.025-5.325 5.025h-3.919V7.416zm1.444 1.303v7.444h2.297c3.272 0 4.022-2.484 4.022-3.722 0-2.016-1.284-3.722-4.097-3.722h-2.222z" />
+    </svg>
+);
+
+const TwitterBirdIcon = ({ className }: { className?: string }) => (
+    <svg
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        className={className}
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+    >
+        <path d="M23.4 4.83a9.55 9.55 0 0 1-2.74.75 4.8 4.8 0 0 0 2.1-2.64 9.6 9.6 0 0 1-3.04 1.16 4.78 4.78 0 0 0-8.14 4.35A13.56 13.56 0 0 1 1.67 3.15a4.78 4.78 0 0 0 1.48 6.38 4.75 4.75 0 0 1-2.17-.6v.06a4.79 4.79 0 0 0 3.83 4.69 4.8 4.8 0 0 1-2.16.08 4.79 4.79 0 0 0 4.47 3.32A9.59 9.59 0 0 1 .96 19.1a13.53 13.53 0 0 0 7.32 2.15c8.78 0 13.58-7.27 13.58-13.58 0-.21 0-.41-.01-.62a9.7 9.7 0 0 0 2.38-2.47Z" />
     </svg>
 );
 
@@ -103,7 +116,7 @@ export default function Profile({ author, social, features, researchInterests }:
         ...(social.github ? [{
             name: 'GitHub',
             href: social.github,
-            icon: Github,
+            icon: GitHubMarkIcon,
         }] : []),
         ...(social.linkedin ? [{
             name: 'LinkedIn',
@@ -113,7 +126,7 @@ export default function Profile({ author, social, features, researchInterests }:
         ...(social.twitter ? [{
             name: 'X',
             href: social.twitter,
-            icon: Twitter,
+            icon: TwitterBirdIcon,
         }] : []),
     ];
 

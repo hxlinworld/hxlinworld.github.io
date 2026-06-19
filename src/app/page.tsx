@@ -1,6 +1,7 @@
 import { getConfig } from '@/lib/config';
 import { getMarkdownContent, getBibtexContent, getTomlContent, getPageConfig } from '@/lib/content';
 import { parseBibTeX } from '@/lib/bibtexParser';
+import { enrichPublicationsWithGitHubStars } from '@/lib/githubStars';
 import HomePageClient, { type HomePageLocaleData } from '@/components/home/HomePageClient';
 import { Publication } from '@/types/publication';
 import { BasePageConfig, PublicationPageConfig, TextPageConfig, CardPageConfig } from '@/types/page';
@@ -29,8 +30,8 @@ type PageData =
   | { type: 'text'; id: string; config: TextPageConfig; content: string }
   | { type: 'card'; id: string; config: CardPageConfig };
 
-function processSections(sections: SectionConfig[], locale?: string): SectionConfig[] {
-  return sections.map((section: SectionConfig) => {
+async function processSections(sections: SectionConfig[], locale?: string): Promise<SectionConfig[]> {
+  return Promise.all(sections.map(async (section: SectionConfig) => {
     switch (section.type) {
       case 'markdown':
         return {
@@ -39,7 +40,7 @@ function processSections(sections: SectionConfig[], locale?: string): SectionCon
         };
       case 'publications': {
         const bibtex = getBibtexContent('publications.bib', locale);
-        const allPubs = parseBibTeX(bibtex, locale);
+        const allPubs = await enrichPublicationsWithGitHubStars(parseBibTeX(bibtex, locale));
         const filteredPubs = section.filter === 'selected'
           ? allPubs.filter((p) => p.selected)
           : allPubs;
@@ -58,10 +59,10 @@ function processSections(sections: SectionConfig[], locale?: string): SectionCon
       default:
         return section;
     }
-  });
+  }));
 }
 
-function loadPageDataForLocale(locale: string | undefined): HomePageLocaleData {
+async function loadPageDataForLocale(locale: string | undefined): Promise<HomePageLocaleData> {
   const localeConfig = getConfig(locale);
   const enableOnePageMode = localeConfig.features.enable_one_page_mode;
 
@@ -71,9 +72,9 @@ function loadPageDataForLocale(locale: string | undefined): HomePageLocaleData {
   let pagesToShow: PageData[] = [];
 
   if (enableOnePageMode) {
-    pagesToShow = localeConfig.navigation
+    const pageDataPromises = localeConfig.navigation
       .filter((item) => item.type === 'page')
-      .map((item) => {
+      .map(async (item) => {
         const rawConfig = getPageConfig(item.target, locale);
         if (!rawConfig) return null;
 
@@ -83,7 +84,7 @@ function loadPageDataForLocale(locale: string | undefined): HomePageLocaleData {
           return {
             type: 'about',
             id: item.target,
-            sections: processSections((rawConfig as { sections: SectionConfig[] }).sections || [], locale),
+            sections: await processSections((rawConfig as { sections: SectionConfig[] }).sections || [], locale),
           } as PageData;
         }
 
@@ -94,7 +95,7 @@ function loadPageDataForLocale(locale: string | undefined): HomePageLocaleData {
             type: 'publication',
             id: item.target,
             config: pubConfig,
-            publications: parseBibTeX(bibtex, locale),
+            publications: await enrichPublicationsWithGitHubStars(parseBibTeX(bibtex, locale)),
           } as PageData;
         }
 
@@ -117,13 +118,13 @@ function loadPageDataForLocale(locale: string | undefined): HomePageLocaleData {
         }
 
         return null;
-      })
-      .filter((item): item is PageData => item !== null);
+      });
+    pagesToShow = (await Promise.all(pageDataPromises)).filter((item): item is PageData => item !== null);
   } else if (aboutConfig) {
     pagesToShow = [{
       type: 'about',
       id: 'about',
-      sections: processSections(aboutConfig.sections || [], locale),
+      sections: await processSections(aboutConfig.sections || [], locale),
     }];
   }
 
@@ -137,7 +138,7 @@ function loadPageDataForLocale(locale: string | undefined): HomePageLocaleData {
   };
 }
 
-export default function Home() {
+export default async function Home() {
   const baseConfig = getConfig();
   const runtimeI18n = getRuntimeI18nConfig(baseConfig.i18n);
   const targetLocales = runtimeI18n.enabled ? runtimeI18n.locales : [runtimeI18n.defaultLocale];
@@ -145,11 +146,11 @@ export default function Home() {
   const dataByLocale: Record<string, HomePageLocaleData> = {};
 
   for (const locale of targetLocales) {
-    dataByLocale[locale] = loadPageDataForLocale(locale);
+    dataByLocale[locale] = await loadPageDataForLocale(locale);
   }
 
   if (!dataByLocale[runtimeI18n.defaultLocale]) {
-    dataByLocale[runtimeI18n.defaultLocale] = loadPageDataForLocale(undefined);
+    dataByLocale[runtimeI18n.defaultLocale] = await loadPageDataForLocale(undefined);
   }
 
   return <HomePageClient dataByLocale={dataByLocale} defaultLocale={runtimeI18n.defaultLocale} />;

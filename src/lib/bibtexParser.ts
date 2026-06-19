@@ -88,6 +88,7 @@ export function parseBibTeX(bibtexContent: string, locale?: string): Publication
       arxivId: tags.arxiv || tags.arxivid || tags.eprint,
       url: tags.url,
       code: tags.code,
+      stars: tags.stars,
       video: tags.video,
       abstract: cleanBibTeXString(tags.abstract),
       description: cleanBibTeXString(tags.description || tags.note),
@@ -95,7 +96,7 @@ export function parseBibTeX(bibtexContent: string, locale?: string): Publication
       preview,
 
       // Store original BibTeX (excluding custom fields)
-      bibtex: reconstructBibTeX(entry, ['selected', 'preview', 'description', 'keywords', 'code', 'video', 'arxiv', 'arxivid']),
+      bibtex: reconstructBibTeX(entry, ['selected', 'preview', 'description', 'keywords', 'code', 'stars', 'video', 'arxiv', 'arxivid']),
     };
 
     // Clean up undefined fields
