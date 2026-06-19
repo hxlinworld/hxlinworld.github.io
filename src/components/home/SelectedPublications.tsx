@@ -3,11 +3,11 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import {
-    CodeBracketIcon,
     DocumentTextIcon,
     LinkIcon,
     VideoCameraIcon,
 } from '@heroicons/react/24/outline';
+import { Github } from 'lucide-react';
 import { Publication } from '@/types/publication';
 import { useMessages } from '@/lib/i18n/useMessages';
 import FormattedBibTeXText from '@/components/publications/FormattedBibTeXText';
@@ -117,7 +117,7 @@ export default function SelectedPublications({ publications, title, enableOnePag
                                             rel="noopener noreferrer"
                                             className="inline-flex h-5 items-center px-2 rounded-md text-[12px] leading-none font-normal bg-neutral-100 dark:bg-neutral-800 text-neutral-950 dark:text-neutral-200 hover:bg-accent hover:text-white transition-colors"
                                         >
-                                            <CodeBracketIcon className="h-3 w-3 mr-1" />
+                                            <Github className="h-3 w-3 mr-1" />
                                             {messages.publications.code}
                                         </a>
                                     )}
