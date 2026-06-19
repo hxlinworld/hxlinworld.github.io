@@ -9,9 +9,9 @@ import {
     BookOpenIcon,
     LinkIcon,
     DocumentTextIcon,
-    CodeBracketIcon,
     VideoCameraIcon
 } from '@heroicons/react/24/outline';
+import { Github } from 'lucide-react';
 import { Publication } from '@/types/publication';
 import { PublicationPageConfig } from '@/types/page';
 import { cn } from '@/lib/utils';
@@ -270,7 +270,7 @@ export default function PublicationsList({ config, publications, embedded = fals
                                                 rel="noopener noreferrer"
                                                 className="inline-flex h-6 items-center px-2.5 rounded-md text-[13px] leading-none font-normal bg-neutral-100 dark:bg-neutral-800 text-neutral-950 dark:text-neutral-200 hover:bg-accent hover:text-white transition-colors"
                                             >
-                                                <CodeBracketIcon className="h-3 w-3 mr-1" />
+                                                <Github className="h-3 w-3 mr-1" />
                                                 {messages.publications.code}
                                             </a>
                                         )}
