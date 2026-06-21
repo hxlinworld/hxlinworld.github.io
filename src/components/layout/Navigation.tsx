@@ -76,7 +76,7 @@ export default function Navigation({
 
       const getActiveHashFromScroll = () => {
         const pageItems = visibleItems.filter((item) => item.type === 'page');
-        const anchorLine = window.innerHeight * 0.45;
+        const anchorLine = window.innerHeight * 0.65;
         let activeTarget = pageItems[0]?.target;
 
         for (const item of pageItems) {
