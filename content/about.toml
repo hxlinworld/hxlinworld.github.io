@@ -4,7 +4,7 @@ title = "About"
 [profile]
 research_interests = [
   "Physics-Based Simulation",
-  "Physics-Based humanoid control",
+  "humanoid interaction learning and control",
 ]
 
 [[sections]]
