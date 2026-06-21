@@ -38,6 +38,9 @@ export default function PublicationsList({ config, publications, embedded = fals
     const [selectedYear, setSelectedYear] = useState<number | 'all'>('all');
     const [selectedType, setSelectedType] = useState<string | 'all'>('all');
     const [showFilters, setShowFilters] = useState(false);
+    const previewContainerClass = embedded
+        ? 'w-full md:w-56 flex-shrink-0 md:self-start md:mt-2'
+        : 'w-full md:w-56 lg:w-64 flex-shrink-0 md:self-end md:mb-3';
 
     // Extract unique years and types for filters
     const years = useMemo(() => {
@@ -206,15 +209,15 @@ export default function PublicationsList({ config, publications, embedded = fals
                             transition={{ duration: 0.4, delay: 0.1 * index }}
                             className="publication-card-font bg-white dark:bg-neutral-900 px-4 pt-4 pb-3 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 hover:shadow-md transition-all duration-200"
                         >
-                            <div className="flex flex-col md:flex-row gap-4">
+                            <div className={`flex flex-col md:flex-row ${embedded ? 'gap-5' : 'gap-4'}`}>
                                 {pub.preview && (
-                                    <div className={`${embedded ? 'w-full md:w-52' : 'w-full md:w-56 lg:w-64'} flex-shrink-0 md:self-end md:mb-3`}>
+                                    <div className={previewContainerClass}>
                                         <div className="aspect-video relative rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-800">
                                             <PublicationPreviewMedia preview={pub.preview} title={pub.title} />
                                         </div>
                                     </div>
                                 )}
-                                <div className="flex-grow min-w-0">
+                                <div className={`flex-grow min-w-0 ${embedded ? 'pt-0.5' : ''}`}>
                                     <h3 className={`${embedded ? "text-[17px]" : "text-[18px]"} font-bold text-neutral-950 dark:text-[#9fb7df] mb-1 leading-[1.3]`}>
                                         <FormattedBibTeXText nodes={pub.titleNodes} fallback={pub.title} />
                                     </h3>
