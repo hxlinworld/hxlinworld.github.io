@@ -78,13 +78,6 @@ export default function Navigation({
         const pageItems = visibleItems.filter((item) => item.type === 'page');
         const anchorLine = window.innerHeight * 0.45;
         let activeTarget = pageItems[0]?.target;
-        const scrollBottom = window.scrollY + window.innerHeight;
-        const pageBottom = document.documentElement.scrollHeight;
-
-        if (pageItems.length > 0 && scrollBottom >= pageBottom - 2) {
-          activeTarget = pageItems[pageItems.length - 1].target;
-          return activeTarget && activeTarget !== 'about' ? `#${activeTarget}` : '';
-        }
 
         for (const item of pageItems) {
           const element = document.getElementById(item.target);
