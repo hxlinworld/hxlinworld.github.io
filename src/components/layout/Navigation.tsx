@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import type { MouseEvent } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -77,6 +78,13 @@ export default function Navigation({
         const pageItems = visibleItems.filter((item) => item.type === 'page');
         const anchorLine = window.innerHeight * 0.45;
         let activeTarget = pageItems[0]?.target;
+        const scrollBottom = window.scrollY + window.innerHeight;
+        const pageBottom = document.documentElement.scrollHeight;
+
+        if (pageItems.length > 0 && scrollBottom >= pageBottom - 2) {
+          activeTarget = pageItems[pageItems.length - 1].target;
+          return activeTarget && activeTarget !== 'about' ? `#${activeTarget}` : '';
+        }
 
         for (const item of pageItems) {
           const element = document.getElementById(item.target);
@@ -128,11 +136,22 @@ export default function Navigation({
   const getDesktopItemHref = (item: SiteConfig['navigation'][number]) =>
     enableOnePageMode ? (item.target === 'about' ? '/' : `/#${item.target}`) : item.href;
 
-  const handleOnePageItemClick = (item: SiteConfig['navigation'][number]) => {
+  const handleOnePageItemClick = (
+    event: MouseEvent<HTMLAnchorElement>,
+    item: SiteConfig['navigation'][number]
+  ) => {
     if (!enableOnePageMode) return;
 
     hashNavigationUntilRef.current = Date.now() + 1500;
     setActiveHash(item.target === 'about' ? '' : `#${item.target}`);
+
+    const element = document.getElementById(item.target);
+    if (!element) return;
+
+    event.preventDefault();
+    const nextUrl = item.target === 'about' ? '/' : `/#${item.target}`;
+    window.history.pushState(null, '', nextUrl);
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const activeItem = visibleItems.find((item) => isDesktopItemActive(item)) ?? null;
@@ -238,7 +257,7 @@ export default function Navigation({
                             href={href}
                             data-nav-href={href}
                             prefetch={true}
-                            onClick={() => handleOnePageItemClick(item)}
+                            onClick={(event) => handleOnePageItemClick(event, item)}
                             onMouseEnter={() => setHoveredHref(href)}
                             className={cn(
                               'relative px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150',
@@ -313,7 +332,7 @@ export default function Navigation({
                             as={Link}
                             href={href}
                             prefetch={true}
-                            onClick={() => handleOnePageItemClick(item)}
+                            onClick={(event) => handleOnePageItemClick(event, item)}
                             className={cn(
                               'block px-3 py-2 rounded-md text-base font-medium transition-all duration-200',
                               isActive
