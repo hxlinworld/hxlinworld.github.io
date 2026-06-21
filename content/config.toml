@@ -66,6 +66,7 @@ title = "Services"
 type = "page"
 target = "services"
 href = "/services"
+hidden = true
 
 
 [[navigation]]
@@ -73,12 +74,14 @@ title = "Teaching"
 type = "page"
 target = "teaching"
 href = "/teaching"
+hidden = true
 
 [[navigation]]
 title = "Awards"
 type = "page"
 target = "awards"
 href = "/awards"
+hidden = true
 
 
 [[navigation]]
@@ -86,3 +89,4 @@ title = "CV"
 type = "page"
 target = "cv"
 href = "/cv"
+hidden = true

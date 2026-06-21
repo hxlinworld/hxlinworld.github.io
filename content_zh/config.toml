@@ -32,21 +32,25 @@ title = "教学"
 type = "page"
 target = "teaching"
 href = "/teaching"
+hidden = true
 
 [[navigation]]
 title = "奖项"
 type = "page"
 target = "awards"
 href = "/awards"
+hidden = true
 
 [[navigation]]
 title = "服务"
 type = "page"
 target = "services"
 href = "/services"
+hidden = true
 
 [[navigation]]
 title = "简历"
 type = "page"
 target = "cv"
 href = "/cv"
+hidden = true

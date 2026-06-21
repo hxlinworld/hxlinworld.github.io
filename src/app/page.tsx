@@ -73,7 +73,7 @@ async function loadPageDataForLocale(locale: string | undefined): Promise<HomePa
 
   if (enableOnePageMode) {
     const pageDataPromises = localeConfig.navigation
-      .filter((item) => item.type === 'page')
+      .filter((item) => item.type === 'page' && !item.hidden)
       .map(async (item) => {
         const rawConfig = getPageConfig(item.target, locale);
         if (!rawConfig) return null;

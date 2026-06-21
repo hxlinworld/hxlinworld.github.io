@@ -38,6 +38,7 @@ export default function Navigation({
   const [hoveredHref, setHoveredHref] = useState<string | null>(null);
   const messages = useMessages();
   const navContainerRef = useRef<HTMLDivElement>(null);
+  const hashNavigationUntilRef = useRef(0);
   const [indicatorStyle, setIndicatorStyle] = useState<{
     left: number;
     width: number;
@@ -49,6 +50,10 @@ export default function Navigation({
   const effectiveItems = useMemo(() => {
     return itemsByLocale?.[resolvedLocale] || itemsByLocale?.[i18n.defaultLocale] || items;
   }, [i18n.defaultLocale, items, itemsByLocale, resolvedLocale]);
+
+  const visibleItems = useMemo(() => {
+    return effectiveItems.filter((item) => !item.hidden);
+  }, [effectiveItems]);
 
   const effectiveSiteTitle = useMemo(() => {
     return siteTitleByLocale?.[resolvedLocale] || siteTitleByLocale?.[i18n.defaultLocale] || siteTitle;
@@ -64,54 +69,54 @@ export default function Navigation({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const visibleSections = useRef(new Set<string>());
-
   useEffect(() => {
     if (enableOnePageMode) {
-      setActiveHash(window.location.hash);
-      const handleHashChange = () => setActiveHash(window.location.hash);
+      let frameId = 0;
+
+      const getActiveHashFromScroll = () => {
+        const pageItems = visibleItems.filter((item) => item.type === 'page');
+        const anchorLine = window.innerHeight * 0.45;
+        let activeTarget = pageItems[0]?.target;
+
+        for (const item of pageItems) {
+          const element = document.getElementById(item.target);
+          if (!element) continue;
+
+          if (element.getBoundingClientRect().top <= anchorLine) {
+            activeTarget = item.target;
+          }
+        }
+
+        return activeTarget && activeTarget !== 'about' ? `#${activeTarget}` : '';
+      };
+
+      const normalizeHash = (hash: string) => hash === '#about' ? '' : hash;
+      const updateActiveHashFromScroll = () => setActiveHash(getActiveHashFromScroll());
+
+      setActiveHash(normalizeHash(window.location.hash) || getActiveHashFromScroll());
+      const handleHashChange = () => {
+        hashNavigationUntilRef.current = Date.now() + 1500;
+        setActiveHash(normalizeHash(window.location.hash));
+      };
       window.addEventListener('hashchange', handleHashChange);
 
-      visibleSections.current.clear();
-
-      const observerCallback = (entries: IntersectionObserverEntry[]) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            visibleSections.current.add(entry.target.id);
-          } else {
-            visibleSections.current.delete(entry.target.id);
-          }
-        });
-
-        const firstVisible = effectiveItems.find(
-          (item) => item.type === 'page' && visibleSections.current.has(item.target)
-        );
-        if (firstVisible) {
-          setActiveHash(firstVisible.target === 'about' ? '' : `#${firstVisible.target}`);
+      const handleScroll = () => {
+        if (Date.now() < hashNavigationUntilRef.current) {
+          return;
         }
+
+        window.cancelAnimationFrame(frameId);
+        frameId = window.requestAnimationFrame(updateActiveHashFromScroll);
       };
-
-      const observerOptions = {
-        root: null,
-        rootMargin: '-20% 0px -60% 0px',
-        threshold: 0,
-      };
-
-      const observer = new IntersectionObserver(observerCallback, observerOptions);
-
-      effectiveItems.forEach((item) => {
-        if (item.type === 'page') {
-          const element = document.getElementById(item.target);
-          if (element) observer.observe(element);
-        }
-      });
+      window.addEventListener('scroll', handleScroll, { passive: true });
 
       return () => {
         window.removeEventListener('hashchange', handleHashChange);
-        observer.disconnect();
+        window.removeEventListener('scroll', handleScroll);
+        window.cancelAnimationFrame(frameId);
       };
     }
-  }, [enableOnePageMode, effectiveItems]);
+  }, [enableOnePageMode, visibleItems]);
 
   const isDesktopItemActive = (item: SiteConfig['navigation'][number]) =>
     enableOnePageMode
@@ -121,9 +126,16 @@ export default function Navigation({
         : pathname.startsWith(item.href));
 
   const getDesktopItemHref = (item: SiteConfig['navigation'][number]) =>
-    enableOnePageMode ? `/#${item.target}` : item.href;
+    enableOnePageMode ? (item.target === 'about' ? '/' : `/#${item.target}`) : item.href;
 
-  const activeItem = effectiveItems.find((item) => isDesktopItemActive(item)) ?? null;
+  const handleOnePageItemClick = (item: SiteConfig['navigation'][number]) => {
+    if (!enableOnePageMode) return;
+
+    hashNavigationUntilRef.current = Date.now() + 1500;
+    setActiveHash(item.target === 'about' ? '' : `#${item.target}`);
+  };
+
+  const activeItem = visibleItems.find((item) => isDesktopItemActive(item)) ?? null;
   const activeHref = activeItem ? getDesktopItemHref(activeItem) : null;
   const indicatorHref = hoveredHref ?? activeHref;
 
@@ -216,7 +228,7 @@ export default function Navigation({
                           }}
                         />
                       )}
-                      {effectiveItems.map((item) => {
+                      {visibleItems.map((item) => {
                         const isActive = isDesktopItemActive(item);
                         const href = getDesktopItemHref(item);
 
@@ -226,7 +238,7 @@ export default function Navigation({
                             href={href}
                             data-nav-href={href}
                             prefetch={true}
-                            onClick={() => enableOnePageMode && setActiveHash(`#${item.target}`)}
+                            onClick={() => handleOnePageItemClick(item)}
                             onMouseEnter={() => setHoveredHref(href)}
                             className={cn(
                               'relative px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150',
@@ -279,7 +291,7 @@ export default function Navigation({
                   className="lg:hidden bg-background/95 backdrop-blur-xl border-b border-neutral-200/50 shadow-lg"
                 >
                   <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                    {effectiveItems.map((item, index) => {
+                    {visibleItems.map((item, index) => {
                       const isActive = enableOnePageMode
                         ? (item.href === '/' ? pathname === '/' && !activeHash : activeHash === `#${item.target}`)
                         : (item.href === '/'
@@ -301,7 +313,7 @@ export default function Navigation({
                             as={Link}
                             href={href}
                             prefetch={true}
-                            onClick={() => enableOnePageMode && setActiveHash(item.href === '/' ? '' : `#${item.target}`)}
+                            onClick={() => handleOnePageItemClick(item)}
                             className={cn(
                               'block px-3 py-2 rounded-md text-base font-medium transition-all duration-200',
                               isActive
