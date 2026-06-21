@@ -31,7 +31,7 @@ twitter = "https://x.com/lUufXSE5dHVH3r4"
 enable_likes = false
 
 # Display all subpages on a single page
-enable_one_page_mode = false
+enable_one_page_mode = true
 
 [i18n]
 enabled = false
