@@ -61,11 +61,11 @@ type = "page"
 target = "publications"
 href = "/publications"
 
-[[navigation]]
-title = "Services"
-type = "page"
-target = "services"
-href = "/services"
+# [[navigation]]
+# title = "Services"
+# type = "page"
+# target = "services"
+# href = "/services"
 
 
 # [[navigation]]
@@ -81,8 +81,8 @@ href = "/services"
 # href = "/awards"
 
 
-[[navigation]]
-title = "CV"
-type = "page"
-target = "cv"
-href = "/cv"
+# [[navigation]]
+# title = "CV"
+# type = "page"
+# target = "cv"
+# href = "/cv"
