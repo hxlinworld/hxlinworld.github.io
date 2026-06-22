@@ -66,7 +66,7 @@ title = "Services"
 type = "page"
 target = "services"
 href = "/services"
-hidden = false
+hidden = true
 
 
 [[navigation]]
@@ -74,7 +74,7 @@ title = "Teaching"
 type = "page"
 target = "teaching"
 href = "/teaching"
-hidden = false
+hidden = true
 
 [[navigation]]
 title = "Awards"
