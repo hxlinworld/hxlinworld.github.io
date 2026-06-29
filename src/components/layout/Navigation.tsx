@@ -223,8 +223,8 @@ export default function Navigation({
                           className={cn(
                             'absolute rounded-lg pointer-events-none',
                             hoveredHref && hoveredHref !== activeHref
-                              ? 'bg-accent/[0.07]'
-                              : 'bg-accent/10'
+                              ? 'bg-accent/[0.07] dark:bg-accent/50'
+                              : 'bg-accent/10 dark:bg-accent/70'
                           )}
                           initial={false}
                           animate={{
@@ -255,10 +255,10 @@ export default function Navigation({
                             className={cn(
                               'relative px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150',
                               isActive
-                                ? 'text-primary'
+                                ? 'text-primary dark:text-white'
                                 : hoveredHref === href
-                                  ? 'text-primary'
-                                  : 'text-neutral-600'
+                                  ? 'text-primary dark:text-white'
+                                  : 'text-neutral-600 dark:text-neutral-300'
                             )}
                           >
                             {item.title}
@@ -329,8 +329,8 @@ export default function Navigation({
                             className={cn(
                               'block px-3 py-2 rounded-md text-base font-medium transition-all duration-200',
                               isActive
-                                ? 'text-primary bg-accent/10 border-l-4 border-accent'
-                                : 'text-neutral-600 hover:text-primary hover:bg-neutral-50'
+                                ? 'text-primary dark:text-white bg-accent/10 dark:bg-accent/70 border-l-4 border-accent'
+                                : 'text-neutral-600 dark:text-neutral-300 hover:text-primary dark:hover:text-white hover:bg-neutral-50 dark:hover:bg-accent/50'
                             )}
                           >
                             {item.title}
