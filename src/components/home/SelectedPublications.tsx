@@ -81,7 +81,7 @@ export default function SelectedPublications({ publications, title, enableOnePag
                                     ))}
                                 </p>
                                 <p className="text-[16px] font-normal text-neutral-950 dark:text-neutral-500 mb-2 leading-[1.3]">
-                                    <em>{getDisplayVenue(pub)}</em> {pub.year}
+                                    {getDisplayVenue(pub)}, {pub.year}
                                 </p>
                                 {pub.description && (
                                     <p className="text-[16px] text-neutral-950 dark:text-neutral-500 mb-2.5 line-clamp-2 leading-[1.3]">

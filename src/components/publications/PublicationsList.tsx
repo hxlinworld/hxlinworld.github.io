@@ -235,7 +235,7 @@ export default function PublicationsList({ config, publications, embedded = fals
                                         ))}
                                     </p>
                                     <p className={`${embedded ? "text-base" : "text-[16px]"} font-normal text-neutral-950 dark:text-neutral-500 mb-2 leading-[1.3]`}>
-                                        <em>{getDisplayVenue(pub)}</em> {pub.year}
+                                        {getDisplayVenue(pub)}, {pub.year}
                                     </p>
 
                                     {pub.description && (
