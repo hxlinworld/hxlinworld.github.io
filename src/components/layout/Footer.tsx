@@ -12,6 +12,7 @@ interface FooterProps {
 export default function Footer({ lastUpdated, lastUpdatedByLocale, defaultLocale = 'en' }: FooterProps) {
   const locale = useLocaleStore((state) => state.locale);
   const messages = useMessages();
+  const currentYear = new Date().getFullYear();
 
   const resolvedLastUpdated =
     lastUpdatedByLocale?.[locale] ||
@@ -27,7 +28,7 @@ export default function Footer({ lastUpdated, lastUpdatedByLocale, defaultLocale
             {messages.footer.lastUpdated}: {resolvedLastUpdated}
           </p>
           <p className="text-xs text-neutral-500">
-            © Copyright 2026 Xiaolin Huang 🚀.
+            © Copyright {currentYear} Xiaolin Huang 🚀.
           </p>
         </div>
       </div>
