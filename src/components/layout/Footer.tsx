@@ -34,7 +34,7 @@ export default function Footer({ lastUpdated, lastUpdatedByLocale, defaultLocale
               rel="noopener noreferrer"
               className="transition-colors hover:text-neutral-700 dark:hover:text-neutral-300"
             >
-              https://prism-demo.pages.dev/
+              PRISM
             </a>
           </p>
         </div>
