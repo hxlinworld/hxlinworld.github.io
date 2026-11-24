@@ -131,7 +131,7 @@ html = f'''<!doctype html>
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="masthead">
   <a class="brand" href="https://hxlinworld.github.io/"><span class="brand-mark" aria-hidden="true">xh.</span><span class="brand-name">Xiaolin Huang<small>RESEARCH NOTES</small></span></a>
-  <nav class="top-links" aria-label="Site links"><a href="https://hxlinworld.github.io/">Personal homepage</a><a href="{e(DATA['sourceUrl'])}" target="_blank" rel="noopener noreferrer">Original Notion guide</a></nav>
+  <nav class="top-links" aria-label="Site links"><a href="https://hxlinworld.github.io/">Personal homepage</a></nav>
 </header>
 <div class="layout">
 <aside class="sidebar" aria-label="Guide navigation">
@@ -170,7 +170,7 @@ html = f'''<!doctype html>
     <div class="section-heading"><div><p class="eyebrow">BEYOND THE PAPERS</p><h2 id="talks-title">Talks &amp; Blogs</h2><p class="section-description">Conversations, technical talks, and notes from across the field.</p></div><span class="section-count">{COUNTS['talks']} resources</span></div>
     <div class="talk-list">{''.join(talks)}</div>
   </section>
-  <footer class="site-footer"><div><strong>Human &amp; Humanoid Motion Learning Guide</strong><p>Adapted from the <a href="{e(DATA['sourceUrl'])}" target="_blank" rel="noopener noreferrer">original Notion guide</a>. Resource order, affiliations, and links follow the source.</p><small>Source last edited: {SOURCE_DATE}. This page is a static edition.</small></div><nav aria-label="Footer"><a href="https://hxlinworld.github.io/">Xiaolin Huang’s homepage</a><a href="#overview">Back to overview</a></nav></footer>
+  <footer class="site-footer"><div><strong>Human &amp; Humanoid Motion Learning Guide</strong><p>A curated collection of courses, researchers, projects, and resources.</p><small>Content last updated: {SOURCE_DATE}.</small></div><nav aria-label="Footer"><a href="https://hxlinworld.github.io/">Xiaolin Huang’s homepage</a><a href="#overview">Back to overview</a></nav></footer>
 </main>
 </div>
 <button class="back-to-top" type="button" aria-label="Back to top" hidden>Top</button>
