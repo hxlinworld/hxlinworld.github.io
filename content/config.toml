@@ -62,6 +62,12 @@ target = "publications"
 href = "/publications"
 
 [[navigation]]
+title = "Motion Learning Guide"
+type = "link"
+target = "humanoid-motion-learning-guide"
+href = "/Humanoid-motion-learning-guide/"
+
+[[navigation]]
 title = "Services"
 type = "page"
 target = "services"
