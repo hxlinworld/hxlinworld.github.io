@@ -6,7 +6,7 @@ https://hxlinworld.github.io/Humanoid-motion-learning-guide/
 
 ## Content and editing
 
-The curated source is `content/motion-guide.json`. It preserves the original Notion guide's four sections, researcher groups, project titles, and exact resource URLs. The original source and its last edit time are recorded in that file and displayed in the page footer.
+The curated source is `content/motion-guide.json`. It preserves the original Notion guide's four sections, researcher groups, project titles, and exact resource URLs. The original source and its last edit time are recorded in that file. The public page shows the content date without linking to Notion.
 
 The initial edition contains 3 courses, 14 researcher groups (21 people), 55 projects, 9 resource collections, and 11 talks/blogs: 99 original links in total.
 
