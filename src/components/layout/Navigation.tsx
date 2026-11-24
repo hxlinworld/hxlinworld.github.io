@@ -120,20 +120,22 @@ export default function Navigation({
   }, [enableOnePageMode, visibleItems]);
 
   const isDesktopItemActive = (item: SiteConfig['navigation'][number]) =>
-    enableOnePageMode
+    item.type === 'link' ? false : enableOnePageMode
       ? activeHash === `#${item.target}` || (!activeHash && item.target === 'about')
       : (item.href === '/'
         ? pathname === '/'
         : pathname.startsWith(item.href));
 
   const getDesktopItemHref = (item: SiteConfig['navigation'][number]) =>
-    enableOnePageMode ? (item.target === 'about' ? '/' : `/#${item.target}`) : item.href;
+    enableOnePageMode && item.type !== 'link'
+      ? (item.target === 'about' ? '/' : `/#${item.target}`)
+      : item.href;
 
   const handleOnePageItemClick = (
     event: MouseEvent<HTMLAnchorElement>,
     item: SiteConfig['navigation'][number]
   ) => {
-    if (!enableOnePageMode) return;
+    if (!enableOnePageMode || item.type === 'link') return;
 
     hashNavigationUntilRef.current = Date.now() + 1500;
     setActiveHash(item.target === 'about' ? '' : `#${item.target}`);
@@ -243,6 +245,28 @@ export default function Navigation({
                       {visibleItems.map((item) => {
                         const isActive = isDesktopItemActive(item);
                         const href = getDesktopItemHref(item);
+                        const className = cn(
+                          'relative px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150',
+                          isActive
+                            ? 'text-primary dark:text-white'
+                            : hoveredHref === href
+                              ? 'text-primary dark:text-white'
+                              : 'text-neutral-600 dark:text-neutral-300'
+                        );
+
+                        if (item.type === 'link') {
+                          return (
+                            <a
+                              key={item.target}
+                              href={href}
+                              data-nav-href={href}
+                              onMouseEnter={() => setHoveredHref(href)}
+                              className={className}
+                            >
+                              {item.title}
+                            </a>
+                          );
+                        }
 
                         return (
                           <Link
@@ -252,14 +276,7 @@ export default function Navigation({
                             prefetch={true}
                             onClick={(event) => handleOnePageItemClick(event, item)}
                             onMouseEnter={() => setHoveredHref(href)}
-                            className={cn(
-                              'relative px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150',
-                              isActive
-                                ? 'text-primary dark:text-white'
-                                : hoveredHref === href
-                                  ? 'text-primary dark:text-white'
-                                  : 'text-neutral-600 dark:text-neutral-300'
-                            )}
+                            className={className}
                           >
                             {item.title}
                           </Link>
@@ -304,15 +321,18 @@ export default function Navigation({
                 >
                   <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                     {visibleItems.map((item, index) => {
-                      const isActive = enableOnePageMode
+                      const isActive = item.type === 'link' ? false : enableOnePageMode
                         ? (item.href === '/' ? pathname === '/' && !activeHash : activeHash === `#${item.target}`)
                         : (item.href === '/'
                           ? pathname === '/'
                           : pathname.startsWith(item.href));
-
-                      const href = enableOnePageMode
-                        ? (item.href === '/' ? '/' : `/#${item.target}`)
-                        : item.href;
+                      const href = getDesktopItemHref(item);
+                      const className = cn(
+                        'block px-3 py-2 rounded-md text-base font-medium transition-all duration-200',
+                        isActive
+                          ? 'text-primary dark:text-white bg-accent/10 dark:bg-accent/70 border-l-4 border-accent'
+                          : 'text-neutral-600 dark:text-neutral-300 hover:text-primary dark:hover:text-white hover:bg-neutral-50 dark:hover:bg-accent/50'
+                      );
 
                       return (
                         <motion.div
@@ -321,20 +341,21 @@ export default function Navigation({
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: index * 0.1 }}
                         >
-                          <Disclosure.Button
-                            as={Link}
-                            href={href}
-                            prefetch={true}
-                            onClick={(event) => handleOnePageItemClick(event, item)}
-                            className={cn(
-                              'block px-3 py-2 rounded-md text-base font-medium transition-all duration-200',
-                              isActive
-                                ? 'text-primary dark:text-white bg-accent/10 dark:bg-accent/70 border-l-4 border-accent'
-                                : 'text-neutral-600 dark:text-neutral-300 hover:text-primary dark:hover:text-white hover:bg-neutral-50 dark:hover:bg-accent/50'
-                            )}
-                          >
-                            {item.title}
-                          </Disclosure.Button>
+                          {item.type === 'link' ? (
+                            <Disclosure.Button as="a" href={href} className={className}>
+                              {item.title}
+                            </Disclosure.Button>
+                          ) : (
+                            <Disclosure.Button
+                              as={Link}
+                              href={href}
+                              prefetch={true}
+                              onClick={(event) => handleOnePageItemClick(event, item)}
+                              className={className}
+                            >
+                              {item.title}
+                            </Disclosure.Button>
+                          )}
                         </motion.div>
                       );
                     })}
