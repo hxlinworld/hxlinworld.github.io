@@ -28,12 +28,6 @@ target = "publications"
 href = "/publications"
 
 [[navigation]]
-title = "运动学习指南"
-type = "link"
-target = "humanoid-motion-learning-guide"
-href = "/Humanoid-motion-learning-guide/"
-
-[[navigation]]
 title = "教学"
 type = "page"
 target = "teaching"
